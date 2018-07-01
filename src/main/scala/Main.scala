@@ -1,4 +1,4 @@
-import processing.core.PApplet
+import processing.core.{PApplet, PShape, PConstants => pc}
 
 
 object Main extends PApplet {
@@ -8,13 +8,20 @@ object Main extends PApplet {
 }
 
 class Main extends PApplet {
-
+  val fwidth = 640
+  val fheight = 360
   override def settings(): Unit = {
-    //fullScreen()
-    size(640, 360)
+//    fullScreen()
+    size(fwidth, fheight)
+    println(width)
+    println(height)
+    println(displayWidth)
+    println(displayHeight)
+    println(sketchWidth())
+    println(sketchHeight())
   }
 
-  val scenes = List(MovingDots(this),Star(this))
+  val scenes = List(MovingDots(this),Star(this), Stars(this))
   var curidx = 0
 //
 //  val movingDots = MovingDots(this)
@@ -38,6 +45,7 @@ class Main extends PApplet {
 //  }
   var scene = scenes(curidx)
   override def setup(): Unit = {
+
     background(0)
     scenes.foreach(s => s.init())
   }
@@ -47,7 +55,7 @@ class Main extends PApplet {
 
     scene.scene()
 
-    Thread.sleep(50)
+//    Thread.sleep(50)
   }
 
   override def keyPressed(): Unit = {
@@ -61,78 +69,19 @@ class Main extends PApplet {
 
 case class Point2d(var x: Float, var y: Float) {
   def +(other: Point2d): Point2d = {
-    x = x + other.x
-    y = y + other.y
-    this
+    Point2d(x + other.x,y + other.y)
   }
   def ^() = (x,y)
   override def toString: String = s"x: $x, y: $y"
 }
-//
-//object Scene {
-//  def merge(A: Scene, B: Scene) = {
-//      //if (this.parent != other.parent) throw new Exception("can only merge scene's that share a parent")
-//      new Scene() {
-//        override def init(): Unit = {
-//          this.init()
-//          other.init()
-//        }
-//        override def control(): Unit = {
-//          this.control()
-//          other.control()
-//        }
-//
-//        override def scene(): Unit = {
-//          this.scene()
-//          other.scene()
-//        }
-//      }
-//    }
-//  }
-//}
-//
-//object Scene {
-//  def merge(A: Scene, B: Scene): Scene = {
-//
-//  }
-//}
 
-
-
-abstract class Scene(parent:PApplet) {
-  def init(): Unit = {}
-  def control(): Unit = {}
-  def scene(): Unit = {}
-//  def merge(other: Scene): Scene = {
-//    new Scene(this.parent) {
-//      override def init(): Unit = {
-//        super.init()
-//        //other.init()
-//      }
-//
-//      override def control(): Unit = {
-//        super.control()
-//        //other.control()
-//      }
-//
-//      override def scene(): Unit = {
-//        super.scene()
-//        other.scene()
-//      }
-//    }
-//  }
-}
-
-
-
-
-case class MovingDots(parent: PApplet) extends Scene(parent) {
+case class MovingDots(parent: Main) extends Scene(parent) {
 
   override def init(): Unit = {}
 
 //  val star = Star(parent)
-  val basex = parent.displayWidth/2
-  val basey = parent.displayHeight/2
+  val basex = parent.fwidth/2
+  val basey = parent.fheight/2//sketchHeight()/2
   val rnd = scala.util.Random
   private def rndPoint2d(): Point2d = Point2d(rnd.nextInt(30)-15,rnd.nextInt(30)-15)
   var dir = rndPoint2d
@@ -140,24 +89,27 @@ case class MovingDots(parent: PApplet) extends Scene(parent) {
   var pos = Point2d(basex,basey)
   var pos2 = Point2d(basex,basey)
   override def control(): Unit = {
+    println(parent.keyCode + "\n")
     if (parent.key == 'n') {
       pos = Point2d(basex,basey)
       pos2 = Point2d(basex,basey)
       dir = rndPoint2d()
       dir2 = rndPoint2d()
     }
+
+    if (parent.key == pc.LEFT) pos = pos + Point2d(-10,0)
+    if (parent.key == pc.RIGHT) pos = pos + Point2d(10,0)
+    if (parent.key == pc.UP) pos = pos + Point2d(0,-10)
+    if (parent.key == pc.DOWN) pos = pos + Point2d(0,10)
   }
   override def scene(): Unit ={
     print(s"\r pos: $pos, pos2: $pos2")
 
-
-
+    pos = pos + dir
+    pos2 = pos2 + dir2
 
     val p1 = Pointer(parent,pos)
     val p2 = Pointer(parent,pos2)
-
-      pos + dir
-      pos2 + dir2
 
 //      {
 //        i += 1; i
@@ -174,35 +126,114 @@ case class Pointer(parent: PApplet, p: Point2d) {
   parent.point(p.x,p.y)
 }
 
-case class Star(parent: PApplet) extends Scene(parent) {
+case class StarCoords() {
+  val coords = Seq(
+     Point2d(0,-50),
+       Point2d(14, -20),
+       Point2d(47, -15),
+       Point2d(23, 7),
+       Point2d(29, 40),
+       Point2d(0, 25),
+       Point2d(-29, 40),
+       Point2d(-23, 7),
+       Point2d(-47, -15),
+       Point2d(-14, -20)
+  )
+}
+
+case class Star(parent: Main) extends Scene(parent) {
   // First create the shape
   val p = Point2d
   var star: processing.core.PShape = _
-  val basex = parent.sketchWidth()/2
-  val basey = parent.sketchHeight()/2
-  val pos = Point2d(basex,basey)
+  val basex = parent.fwidth/2
+  val basey = parent.fheight/2
+  var pos = Point2d(basex,basey)
+  val coords = StarCoords()
 
   override def init(): Unit = {
     star = parent.createShape()
     star.beginShape
     def v(p:Point2d) = star.vertex(p.x,p.y)
     // You can set fill and stroke
-    star.fill(0,255,0)
+    star.fill(0,0,255)
     // Here, we are hardcoding a series of vertices
-    v(pos + p(0,-50))
-    v(pos + p(14, -20))
-    v(pos + p(47, -15))
-    v(pos + p(23, 7))
-    v(pos + p(29, 40))
-    v(pos + p(0, 25))
-    v(pos + p(-29, 40))
-    v(pos + p(-23, 7))
-    v(pos + p(-47, -15))
-    v(pos + p(-14, -20))
+    coords.coords.foreach(
+      pnt => v(pos + pnt)
+    )
     star.endShape
   }
 
-  override def control(): Unit = {}
+  override def control(): Unit = {
 
-  override def scene(): Unit = parent.shape(star)
+    if (parent.key == 'n') pos = Point2d(basex,basey)
+    if (parent.keyCode == 37) pos = pos + Point2d(-10,0)
+    if (parent.keyCode == 39) pos = pos + Point2d(10,0)
+    if (parent.keyCode == 38) pos = pos + Point2d(0,-10)
+    if (parent.keyCode == 40) pos = pos + Point2d(0,10)
+  }
+
+  override def scene(): Unit = {
+    print(s"\r pos: $pos")
+    parent.background(0)
+    init()
+//    parent.translate(pos.x,pos.y)
+    parent.shape(star)
+  }
+}
+
+case class Stars(parent: Main) extends Scene(parent) {
+  // First create the shape
+  val p = Point2d
+  val basex = parent.fwidth/2
+  val basey = parent.fheight/2
+  var pos = Point2d(basex,basey)
+  val verts = StarCoords().coords
+  val radial = 100
+  val numStars = 20
+
+  var baseShapes = List[PShape]()
+
+  override def init() = {
+    val centers = (0 until numStars).map(
+      i => {
+        val angle = (i.toFloat/(numStars+1).toFloat)*2*Math.PI
+        val radialOffset = Point2d(radial* Math.cos(angle).toFloat, radial * Math.sin(angle).toFloat)
+//        println("angle: "+ angle + "ro"+radialOffset)
+        pos + radialOffset
+      }
+    )
+    baseShapes = centers.map {
+      cent => {
+        val shp = parent.createShape()
+        shp.beginShape
+        def v(p:Point2d) = shp.vertex(p.x,p.y)
+        // You can set fill and stroke
+        shp.fill(0,0,255)
+        verts.foreach(
+          pnt => {
+            v(cent + pnt)
+          }
+        )
+        shp.endShape
+        shp
+      }
+      }.toList
+  }
+  override def control(): Unit = {
+
+    if (parent.key == 'n') pos = Point2d(basex,basey)
+    if (parent.keyCode == 37) pos = pos + Point2d(-10,0)
+    if (parent.keyCode == 39) pos = pos + Point2d(10,0)
+    if (parent.keyCode == 38) pos = pos + Point2d(0,-10)
+    if (parent.keyCode == 40) pos = pos + Point2d(0,10)
+  }
+
+  override def scene(): Unit = {
+    print(s"\r pos: $pos")
+    parent.background(0)
+    init()
+    //    parent.translate(pos.x,pos.y)
+    baseShapes.foreach(shp => parent.shape(shp))
+  }
+
 }
