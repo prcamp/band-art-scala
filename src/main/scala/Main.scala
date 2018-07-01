@@ -17,18 +17,37 @@ class Main extends PApplet {
   override def setup(): Unit = {
   }
 
-  var movingX = 15
+
+  val movingDots = MovingDots(this)
 
   override def draw(): Unit = {
-    background(0)
-    stroke(255)
+    movingDots.scene()
+    Thread.sleep(50)
+  }
+
+  override def keyPressed(): Unit = {
+    movingDots.action()
+  }
+}
+
+case class MovingDots(parent: PApplet) {
+
+  var movingX = 15
+
+
+  def action(): Unit = {
+    if (parent.key == 'n') movingX = 15
+  }
+  def scene(): Unit ={
+    parent.background(0)
+    parent.stroke(255)
     var i = 0
     while ( {
       i < 20
     }) {
-      stroke(255, 0 + i * 12)
-      point(movingX + i * 10, 25)
-      point(movingX + 5 + i * 10, 35)
+      parent.stroke(255, 0 + i * 12)
+      parent.point(movingX + i * 10, 25)
+      parent.point(movingX + 5 + i * 10, 35)
 
       {
         i += 1; i
@@ -36,13 +55,9 @@ class Main extends PApplet {
     }
     movingX = movingX + 5
     if (movingX >= 640) movingX = 0
-    Thread.sleep(50)
   }
 
-  override def keyPressed(): Unit = {
-  }
+
 }
-
-
 
 
