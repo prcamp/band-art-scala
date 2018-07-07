@@ -2,7 +2,7 @@ import scala.collection.mutable
 import scala.util.Random
 import processing.core.{PConstants => pc}
 
-case class CA(parent: Main) extends Scene(parent) {
+case class GOL(parent: Main) extends Scene(parent) {
 
   /**
     * modified from:
@@ -21,56 +21,60 @@ case class CA(parent: Main) extends Scene(parent) {
 
   val dims = CellDims(parent)
 
-//  var cells = IndexedSeq[IndexedSeq[Cell]]()
+  //  var cells = IndexedSeq[IndexedSeq[Cell]]()
 
   //val grid = Point2d.grid(parent)
 
-    val cells = (0 until dims.numCellsX).map(
+  val cells: Seq[IndexedSeq[Cell]] = (0 until dims.numCellsX).map(
         i => (0 until dims.numCellsY).map(
           j => Cell(parent, Point2d(i * dims.cellSize, j * dims.cellSize))
         )
       )
   val rnd = Random
-  var rps = 0
-  val balance = 3 // any number
-  val numspecies = 2 * balance + 1
+  //var rps = 0
+  //val balance = 3 // any number
+  val numspecies = 2 //2 * balance + 1
 
   // How likely for a cell to be alive at start (in percentage)
-  val probabilityOfAliveAtStart = 50
+  //val probabilityOfAliveAtStart = 50
 
   // Variables for timer
-  val interval = 0
-  val lastRecordedTime = 0
-  var stepping = 0
+  //val interval = 0
+  //val lastRecordedTime = 0
+  //var stepping = 0
 
   // Periodic boundary conditions?
-  val toroidal = 1
+  // val toroidal = 1
 
-  val v_fader1 = 0.0f
-  val v_fader2 = 0.0f
-  val v_fader3 = 0.0f
-  val v_fader4 = 0.0f
-  val v_fader5 = 0.0f
-  val v_toggle1 = 0.0f
-  val v_toggle2 = 0.0f
-  val v_toggle3 = 0.0f
-  val v_toggle4 = 0.0f
+//  val v_fader1 = 0.0f
+//  val v_fader2 = 0.0f
+//  val v_fader3 = 0.0f
+//  val v_fader4 = 0.0f
+//  val v_fader5 = 0.0f
+//  val v_toggle1 = 0.0f
+//  val v_toggle2 = 0.0f
+//  val v_toggle3 = 0.0f
+//  val v_toggle4 = 0.0f
 
-  val pause = true
+//  val pause = true
 
-  val colarray = new mutable.ArrayBuffer[Int](numspecies)
+  val colarray = new mutable.ArrayBuffer[Int]()//numspecies)
   (0 until numspecies).foreach(
-    i => colarray += parent.color(100 - rnd.nextInt(100), 100, 100)
+    i => {
+      val cellcol = parent.color(255 - rnd.nextInt(255), 255, 255)
+      println(cellcol)
+      colarray += cellcol
+    }
   )
 
   def gencolor() {
     (0 until numspecies).foreach(
-      i => colarray(i) = parent.color(100 - rnd.nextInt(100), 100, 100)
+      i => colarray(i) = parent.color(255 - rnd.nextInt(255), 255, 255)
     )
   }
 
   override def init(): Unit = {
-    parent.colorMode(pc.HSB, 100)
+    parent.colorMode(pc.HSB, 255)
     gencolor()
     initialize(1)
     cells.flatten.foreach(c => c.init())
@@ -93,22 +97,22 @@ case class CA(parent: Main) extends Scene(parent) {
       initialize(3)
       iteration()
     }
-    if (parent.key == 'm' && rps == 0) {
-      rps = 1
-      initialize(1)
-      iteration()
-    }
-    if (parent.key == 'm' && rps == 1) {
-      rps = 0
+//    if (parent.key == 'm' && rps == 0) {
+//      rps = 1
+//      initialize(1)
+//      iteration()
+//    }
+    if (parent.key == 'm') {
+      //rps = 0
       initialize(1)
       iteration()
     }
     if (parent.key == 's') {
-      stepping = 0
+      //stepping = 0
       iteration()
     }
     if (parent.key == ' ') {
-      stepping = 1
+      //stepping = 1
     }
     if (parent.key == 'c') {
       gencolor()
@@ -117,9 +121,9 @@ case class CA(parent: Main) extends Scene(parent) {
   }
 
   override def curscene(): Unit = {
-    if (stepping == 1) {
+//    if (stepping == 1) {
       iteration()
-    }
+//    }
 
   }
 
@@ -152,17 +156,17 @@ case class CA(parent: Main) extends Scene(parent) {
       case (row, xidx) =>
         row.zipWithIndex.foreach {
           case (cell, yidx) => {
-            if (rps == 1) {
-              val nbrcoord = nbrs(rnd.nextInt(8))
-              val nbridx = wrapIdx((xidx + nbrcoord._1, yidx + nbrcoord._2))
-              val m = Math.min(cell.previousState, cells(nbridx._1)(nbridx._2).previousState)
-              val M = Math.max(cell.previousState, cells(nbridx._1)(nbridx._2).previousState)
-              if (M - m <= balance) {
-                cell.state = M
-              } else {
-                cell.state = m
-              }
-            } else {
+//            if (rps == 1) {
+//              val nbrcoord = nbrs(rnd.nextInt(8))
+//              val nbridx = wrapIdx((xidx + nbrcoord._1, yidx + nbrcoord._2))
+//              val m = Math.min(cell.previousState, cells(nbridx._1)(nbridx._2).previousState)
+//              val M = Math.max(cell.previousState, cells(nbridx._1)(nbridx._2).previousState)
+//              if (M - m <= balance) {
+//                cell.state = M
+//              } else {
+//                cell.state = m
+//              }
+//            } else {
               val nbrscoords = nbrs.map {
                 case (i, j) => wrapIdx((xidx + i, yidx + j))
               }
@@ -174,7 +178,7 @@ case class CA(parent: Main) extends Scene(parent) {
               } else {
                 if (livenbrs == 3) cell.state = 1
               }
-            }
+//            }
             parent.pushMatrix()
             cell.curscene()
             parent.popMatrix()
@@ -184,44 +188,44 @@ case class CA(parent: Main) extends Scene(parent) {
   }
 
   def initialize(n: Int): Unit = {
-    if (rps == 1) {
-      n match {
-        case 1 => //rps
-          (0 until dims.numCellsX).foreach(i =>
-            (0 until dims.numCellsY).foreach(
-              j => {
-                cells(i)(j).state =
-                  ((i / (dims.numCellsX + .001)) * numspecies).toInt
-                cells(i)(j).previousState = cells(i)(j).state
-              }
-            )
-          )
-        case 2 =>
-          (0 until dims.numCellsX).foreach(i =>
-            (0 until dims.numCellsY).foreach(
-              j => {
-                cells(i)(j).state = ((i / (dims.numCellsX + .001)) * numspecies).toInt
-                cells(i)(j).previousState = cells(i)(j).state
-              }
-            )
-          )
-        case 3 =>
-          (0 until dims.numCellsX).foreach(i =>
-            (0 until dims.numCellsY).foreach(
-              j => {
-                cells(i)(j).state = ((i * j / (dims.numCellsX * dims.numCellsY + .001)) * numspecies).toInt
-                cells(i)(j).previousState = cells(i)(j).state
-              }
-            )
-          )
-        case 4 =>
-          cells.flatten.foreach(c => {
-            c.state = rnd.nextInt(numspecies)
-            c.previousState = c.state
-          })
-        case _ =>
-      }
-    } else {
+//    if (rps == 1) {
+//      n match {
+//        case 1 => //rps
+//          (0 until dims.numCellsX).foreach(i =>
+//            (0 until dims.numCellsY).foreach(
+//              j => {
+//                cells(i)(j).state =
+//                  ((i / (dims.numCellsX + .001)) * numspecies).toInt
+//                cells(i)(j).previousState = cells(i)(j).state
+//              }
+//            )
+//          )
+//        case 2 =>
+//          (0 until dims.numCellsX).foreach(i =>
+//            (0 until dims.numCellsY).foreach(
+//              j => {
+//                cells(i)(j).state = ((i / (dims.numCellsX + .001)) * numspecies).toInt
+//                cells(i)(j).previousState = cells(i)(j).state
+//              }
+//            )
+//          )
+//        case 3 =>
+//          (0 until dims.numCellsX).foreach(i =>
+//            (0 until dims.numCellsY).foreach(
+//              j => {
+//                cells(i)(j).state = ((i * j / (dims.numCellsX * dims.numCellsY + .001)) * numspecies).toInt
+//                cells(i)(j).previousState = cells(i)(j).state
+//              }
+//            )
+//          )
+//        case 4 =>
+//          cells.flatten.foreach(c => {
+//            c.state = rnd.nextInt(numspecies)
+//            c.previousState = c.state
+//          })
+//        case _ =>
+//      }
+//    } else {
       n match {
         case 1 =>
           (0 until dims.numCellsX).foreach(i =>
@@ -259,8 +263,21 @@ case class CA(parent: Main) extends Scene(parent) {
             c.previousState = c.state
           })
       }
-    }
+//    }
   }
+}
+
+case class CellDims(parent: Main) {
+  val cellSize = 10
+  val rectcoords = List(
+    Point2d(0, 0),
+    Point2d(0, cellSize),
+    Point2d(cellSize, cellSize),
+    Point2d(cellSize, 0)
+  )
+
+  val numCellsX = parent.fwidth / cellSize
+  val numCellsY = parent.fheight / cellSize
 }
 
 case class CellField(parent: Main, positions: Seq[Point2d]) extends Scene(parent) {
@@ -272,9 +289,9 @@ case class CellField(parent: Main, positions: Seq[Point2d]) extends Scene(parent
 }
 
 
-case class Cell(parent: Main, override val initpos: Point2d) extends ShapeObj(parent, CellDims(parent).rectcoords) {
+case class Cell(parent: Main, initpos: Point2d) extends ShapeObj(parent, CellDims(parent).rectcoords) {
 
-  color = -1
+  var color = 0
 
   var state: Int = 0
   var previousState: Int = 0
@@ -284,30 +301,9 @@ case class Cell(parent: Main, override val initpos: Point2d) extends ShapeObj(pa
 
   override def control(): Unit = {}
 
-//  override def curscene(): Unit = {
-//    parent.pushMatrix()
-//    //shape.setFill(color)
-//    //    star.endShape()
-//    parent.shape(shape)
-//    parent.popMatrix()
-//  }
-
-  override def init(): Unit = {}
-
-  override def iteration(): Unit = {}
-
-
-}
-
-case class CellDims(parent: Main) {
-  val cellSize = 5
-  val rectcoords = List(
-    Point2d(0, 0),
-    Point2d(0, cellSize)*2,
-    Point2d(cellSize, cellSize)*2,
-    Point2d(cellSize, 0)*2
-  )
-
-  val numCellsX = parent.fwidth / cellSize
-  val numCellsY = parent.fheight / cellSize
+  override def curscene(): Unit = {
+    shape.setFill(color)
+    //    star.endShape()
+    parent.shape(shape)
+  }
 }

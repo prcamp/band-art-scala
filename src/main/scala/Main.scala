@@ -1,9 +1,13 @@
 import processing.core.{PApplet, PConstants => pc}
 
+import scala.util.Random
+
 object Main extends PApplet {
   def main(args: Array[String]): Unit = {
     PApplet.main("Main")
   }
+  val rnd = Random
+  def randomColor(): Int = color(rnd.nextInt(360),rnd.nextInt(100),rnd.nextInt(100))
 }
 
 class Main extends PApplet {
@@ -17,28 +21,20 @@ class Main extends PApplet {
     fheight = this.displayHeight
     fullScreen()
   } else {
-//    val lib = PJOGL.profile
-//    PJOGL.profile = 1
-    println(pc.P2D)
     size(fwidth, fheight)
   }
-    println(width)
-    println(height)
-    println(displayWidth)
-    println(displayHeight)
-    println(sketchWidth())
-    println(sketchHeight())
+
   }
 
   val center = Point2d(fwidth/4,fheight/4)
 
-  val scenes = List(MovingDots, Star, Stars, ImagePatch) // CA // ShapeIm
+  val scenes = List(MovingDots, GOL, StarScene, Stars, ImagePatch) // CA // ShapeIm
   val sceneapps = scenes.map(sc => sc(this))
   var curidx = 0
 
   var curscene = sceneapps(curidx)
   override def setup(): Unit = {
-
+    colorMode(pc.HSB,360,100,100)
     background(0)
     sceneapps.foreach(s => s.init())
   }
@@ -64,24 +60,3 @@ class Main extends PApplet {
 //  override def control(): Unit = keyPressed()
 }
 
-object Point2d {
-  def ring(center:Point2d, radius: Float, numPoints: Int = 10, angleOffset: Float = 0): List[Point2d] = {
-    (0 until numPoints).map(
-      i => {
-        val angle = angleOffset + (i.toFloat/(numPoints+1).toFloat)*2*Math.PI
-        val radialOffset = Point2d(radius* Math.cos(angle).toFloat, radius * Math.sin(angle).toFloat)
-        //        println("angle: "+ angle + "ro"+radialOffset)
-        center + radialOffset
-      }
-    ).toList
-  }
-}
-
-case class Point2d(var x: Float, var y: Float) {
-  def +(other: Point2d): Point2d = {
-    Point2d(x + other.x,y + other.y)
-  }
-//  def ^() = (x,y)
-  override def toString: String = s"x: $x, y: $y"
-  def *(scale: Float):Point2d = Point2d(scale*x,scale*y)
-}

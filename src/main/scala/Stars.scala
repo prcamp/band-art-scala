@@ -1,32 +1,39 @@
-//
-//
-//case class StarField(parent: Main, centers: List[Point2d]) extends Scene(parent) {
-//
-//  var field = List[ShapeObj]()
-//
-//  override def init(): Unit = {
-//    field = centers.map(pnt => StarShape(parent,pnt))
-//  }
-//
-//  override def control(): Unit = {
-//    field.foreach(shp => shp.control())
-//  }
-//
-//  override def curscene(): Unit = {
-//    field.foreach(shp => shp.curscene())
-//  }
-//}
-//
-//case class Stars(parent: Main) extends Scene(parent) {
-//  val numStars = 15
-//  val centers = Point2d.ring(parent.center,20,numStars)
-//  val stars = StarField(parent, centers)
-//
-//  override def init(): Unit = stars.init()
-//
-//
-//  override def control(): Unit = stars.control()
-//
-//  override def curscene(): Unit = stars.curscene()
-//}
-//
+import scala.collection.mutable.ArrayBuffer
+
+
+case class Stars(parent: Main) extends Scene(parent) {
+  val numStars = 20
+  val initcenters: List[Point2d] = Point2d.ring(parent.center, 80, numStars)
+  var centers = initcenters
+
+  val field = new ArrayBuffer[ShapeObj](numStars)
+  centers.zipWithIndex.foreach{
+    case (pnt,idx) => field += shape(pnt)
+  }
+  override def init(): Unit = {
+
+      field.foreach(shp => shp.init())
+    }
+
+  override def control(): Unit = field.foreach(shp => shp.control())
+
+  override def curscene(): Unit = field.foreach(shp => shp.curscene())
+
+  val osc = Signal.tri(.5)
+
+  def fiteration(shp: StarShape): Unit = {
+    val curh = (360 * osc.signal()).toInt
+    print(s"\r ${osc.signal()}")
+    shp.h = curh
+    shp.color = parent.color(shp.h, shp.s, shp.b)
+  }
+
+  def shape(pnt: Point2d) = new StarShape(parent,pnt) {
+    override def iteration(): Unit = fiteration(this)
+  }
+
+
+}
+
+
+

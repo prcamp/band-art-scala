@@ -7,14 +7,16 @@ abstract class ShapeObj(parent: Main,vertices: Seq[Point2d]) extends Scene(paren
 //    initpos = parent.center
 //  }
 //  val shape: PShape
-  var color: Int
+  var color: Int = Main.randomColor()
   var pos: Point2d = initpos
+  var scale: Float = 1
+  var angle: Float = 0
 
-  var shape = new PShape()
+  var shape: PShape = new PShape()//parent.createShape() //= shape(vertices)
+  def vert(pnt: Point2d):Unit = shape.vertex(pnt.x,pnt.y)
 
-  def shape(vertices: Seq[Point2d]): PShape = {
-    val shape = parent.createShape()
-    def vert(pnt: Point2d):Unit = shape.vertex(pnt.x,pnt.y)
+  override def init(): Unit = {
+    shape = parent.createShape()
     shape.beginShape()
     shape.fill(color)
     vertices.foreach(
@@ -24,7 +26,17 @@ abstract class ShapeObj(parent: Main,vertices: Seq[Point2d]) extends Scene(paren
     shape
   }
 
-  override def init(): Unit = {
-    shape = shape(vertices)
+  def iteration(): Unit
+
+  override def curscene(): Unit = {
+    iteration()
+    parent.pushMatrix()
+    shape.setFill(color)
+    parent.rotate(angle)
+    parent.scale(scale)
+    parent.translate(pos.x,pos.y)//pos.x,pos.y) // Works!
+    parent.shape(shape)
+    parent.popMatrix()
   }
+
 }

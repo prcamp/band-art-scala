@@ -14,7 +14,3 @@ object Signal {
   def tri(frequency: Double) = new Signal(t => 2*Math.min(t % 1, 1 - t % 1),frequency) {}
 }
 
-val osc = Signal.osc(1)
-
-
-osc.signal(0.toLong)
