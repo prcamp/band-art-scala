@@ -18,3 +18,7 @@ val osc = Signal.osc(1)
 
 
 osc.signal(0.toLong)
+
+(0 until 5).foreach{
+  _ => print("\rhi\n")//\n\r\t how are you? \n\r\t I'm fine thanks \n")
+}

@@ -1,3 +1,5 @@
+import processing.core.PVector
+
 object Point2d {
   def ring(center:Point2d, radius: Float, numPoints: Int = 10, angleOffset: Float = 0): List[Point2d] = {
     (0 until numPoints).map(
@@ -24,5 +26,8 @@ case class Point2d(var x: Float, var y: Float) {
   //  def ^() = (x,y)
   override def toString: String = s"x: $x, y: $y"
   def *(scale: Double):Point2d = new Point2d(scale*x,scale*y)
+  def toPVector(): PVector = {
+    new PVector(x,y)
+  }
 }
 

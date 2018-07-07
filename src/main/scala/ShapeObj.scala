@@ -32,8 +32,13 @@ abstract class ShapeObj(parent: Main,vertices: Seq[Point2d]) extends Scene(paren
     iteration()
     parent.pushMatrix()
     shape.setFill(color)
+//    parent.translate(-pos.x,-pos.y)
+    if (scale != 1) {
+      shape.scale(scale)
+      scale = 1
+    }
+
     parent.rotate(angle)
-    parent.scale(scale)
     parent.translate(pos.x,pos.y)//pos.x,pos.y) // Works!
     parent.shape(shape)
     parent.popMatrix()

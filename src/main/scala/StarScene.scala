@@ -1,3 +1,4 @@
+import oscP5.{OscEventListener, OscMessage, OscStatus}
 
 case class StarCoords() {
   val coords = Seq(
@@ -24,7 +25,7 @@ case class StarShape(parent: Main, override val initpos: Point2d) extends ShapeO
 
   var changeRate =  .8
 
-  pos = initpos.copy()
+  pos = initpos
   //val speed = 10
 
   override def control(): Unit = {
@@ -58,13 +59,13 @@ case class StarShape(parent: Main, override val initpos: Point2d) extends ShapeO
   }
 
   override def iteration(): Unit = {
-    pos = pos*(1-changeRate) + Point2d(parent.mouseX,parent.mouseY)*changeRate
+    //pos = pos*(1-changeRate) + Point2d(parent.mouseX,parent.mouseY)*changeRate
     h = (h*(1-changeRate) + Main.rnd.nextInt(360)*changeRate).toInt
     color = parent.color(h,s,b)
   }
 }
 
-case class StarScene(parent: Main) extends Scene(parent) {
+case class StarScene(parent: Main) extends Scene(parent) with OscEventListener {
 
   var pos: Point2d = parent.center
 
@@ -76,9 +77,32 @@ case class StarScene(parent: Main) extends Scene(parent) {
   override def control(): Unit =  star.control()
 
   override def curscene(): Unit = {
-    print(s"\r pos: $pos")
+//    print(s"\r pos: $pos")
 
     star.curscene()
 
+  }
+
+  override def oscEvent(oscmsg: OscMessage): Unit = {
+    super.oscEvent(oscmsg)
+    val addr = oscmsg.addrPattern
+    var rxval = .0
+    var ryval = .0
+    if (addr == "/3/xyM_l") {
+      rxval = parent.fwidth * 2*(oscmsg.get(1).floatValue - .5)
+      ryval = parent.fheight * 2*(oscmsg.get(0).floatValue - .5)
+      star.pos = Point2d(rxval.toFloat,ryval.toFloat)
+      //this.angularOffset = ryval / 2.0F
+    }
+//    else if (addr == "/3/xyM_r") {
+//      rxval = 1.0F * oscmsg.get(1).floatValue
+//      ryval = 1.0F * oscmsg.get(0).floatValue
+//      this.radialOscilator.frequency = rxval.toDouble
+//      this.angularOscilator.frequency = ryval.toDouble
+//    }
+  }
+
+  override def oscStatus(oscStatus: OscStatus): Unit = {
+    super.oscStatus(oscStatus)
   }
 }

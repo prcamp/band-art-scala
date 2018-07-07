@@ -1,8 +1,18 @@
 import scala.collection.mutable.ArrayBuffer
 
-case class Stars(parent: Main) extends Scene(parent) {
+
+case class TestFullscreen(parent: Main) extends Scene(parent) {
   val numStars = 20
-  val initcenters: List[Point2d] = Point2d.ring(parent.center, 80, numStars)
+//  println("in fullscreen test")
+//  println(s"fwidth ${parent.fwidth} fheight ${parent.fheight}")
+//  println(s"center ${parent.center}")
+  val hspc = parent.fwidth/numStars
+  val vspc = parent.fheight/numStars
+  val initcenters: List[Point2d] =
+    (0 until numStars).flatMap(
+      i => (0 until numStars).map(
+        j => Point2d(i*hspc,-j*vspc+i*hspc)
+  )).toList
   var centers = initcenters
 
   val field = new ArrayBuffer[ShapeObj](numStars)
@@ -22,7 +32,7 @@ case class Stars(parent: Main) extends Scene(parent) {
 
   def fiteration(shp: StarShape): Unit = {
     val curh = (360 * osc.signal()).toInt
-//    print(s"\r ${osc.signal()}")
+    print(s"\r ${osc.signal()}")
     shp.h = curh
     shp.color = parent.color(shp.h, shp.s, shp.b)
   }
