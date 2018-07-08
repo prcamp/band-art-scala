@@ -1,5 +1,5 @@
 
-case class CellShape(parent: Main,  override val initpos: Point2d) extends ShapeObj(parent, (new CellDims(parent)).rectcoords) {
+class CellShape(parent: Main,  override val initpos: Point2d) extends ShapePolyObj(parent, (new CellDims(parent)).rectcoords) {
 
   var h = 0
   var b = 100

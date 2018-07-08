@@ -1,6 +1,6 @@
 abstract class ShapeScene {
 
-  val shape: ShapeObj
+  val shape: ShapePolyObj
   val scene: Scene
   //val Field: List(DefaultValues)
 

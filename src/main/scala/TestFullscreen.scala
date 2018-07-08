@@ -15,7 +15,7 @@ case class TestFullscreen(parent: Main) extends Scene(parent) {
   )).toList
   var centers = initcenters
 
-  val field = new ArrayBuffer[ShapeObj](numStars)
+  val field = new ArrayBuffer[ShapePolyObj](numStars)
   centers.zipWithIndex.foreach{
     case (pnt,idx) => field += shape(pnt)
   }

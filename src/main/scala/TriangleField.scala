@@ -16,7 +16,7 @@ case class TriangleField(parent: Main) extends Scene(parent) {
 
   var centers = initcenters
 
-  val field = new ArrayBuffer[ShapeObj](numShapes)
+  val field = new ArrayBuffer[ShapePolyObj](numShapes)
 
   centers.zipWithIndex.foreach{
     case (pnt,idx) => field += shape(pnt)
@@ -68,7 +68,7 @@ case class TriangleCoords() {
     Point2d(100,-100)
   )
 }
-case class Triangle(parent: Main, override val initpos: Point2d) extends ShapeObj(parent, TriangleCoords().coords){
+class Triangle(parent: Main, override val initpos: Point2d) extends ShapePolyObj(parent, TriangleCoords().coords){
 //  var length: Float = (parent.scale/8).toFloat
 //  var spread: Float = 1/2
 

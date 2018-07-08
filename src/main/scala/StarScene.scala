@@ -15,7 +15,7 @@ case class StarCoords() {
   )
 }
 
-case class StarShape(parent: Main, override val initpos: Point2d) extends ShapeObj(parent, (new StarCoords).coords) {
+class StarShape(parent: Main, override val initpos: Point2d) extends ShapePolyObj(parent, (new StarCoords).coords) {
 
   var h = 0
   var b = 100
@@ -70,7 +70,7 @@ case class StarScene(parent: Main) extends Scene(parent) with OscEventListener {
   var pos: Point2d = parent.center
 
   val initpos: Point2d = parent.center
-  val star = StarShape(parent, initpos)
+  val star = new StarShape(parent, initpos)
 
   override def init(): Unit = star.init()
 
