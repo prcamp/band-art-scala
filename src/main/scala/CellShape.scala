@@ -1,13 +1,8 @@
 
 class CellShape(parent: Main,  override val initpos: Point2d) extends ShapePolyObj(parent, (new CellDims(parent)).rectcoords) {
 
-  var h = 0
-  var b = 100
-  var s = 100
   var state = 0
   var prevState = 1
-
-  color = parent.color(h,s,b)
 
   pos = initpos.copy()
 

@@ -10,14 +10,14 @@ object Main extends PApplet {
 
   val rnd = Random
 
-  def randomColor(): Int = color(rnd.nextInt(360), rnd.nextInt(100), rnd.nextInt(100))
+
 }
 
 class Main extends PApplet {
   val controller: OscP5 = new OscP5(this, 12348)
   controller.status(0)
   println(controller.properties())
-
+  val rnd = Random
   val fwidth = 640
   val fheight = 360
   val fullscr = false
@@ -34,16 +34,17 @@ class Main extends PApplet {
   }
 
 
+  def randomPoint(): Point2d = Point2d(rnd.nextInt(fwidth),rnd.nextInt(fheight))
 
 
-
-  val scenes = List(ColoredArrows1,MovingDots, TestFullscreen, GOL, RPS, StarScene, Stars, TriangleField, ImagePatch) // CA // ShapeIm
+  val scenes = List(StaticScene,TriangleScene, LineScene, CircleScene, CAScene, ParticleScene) // CA // ShapeIm
   val sceneapps = scenes.map(sc => sc(this))
   var curidx = 0
 
   var curscene = sceneapps(curidx)
 
   override def setup(): Unit = {
+    rectMode(pc.CENTER)
     var center = Point2d(width / 2, height / 2)
 //    println("setting up")
 //    println(s"fwidth ${fwidth} fheight ${fheight}")

@@ -1,4 +1,4 @@
-import oscP5.{OscEventListener, OscMessage, OscStatus}
+import oscP5.{OscMessage, OscStatus}
 
 case class StarCoords() {
   val coords = Seq(
@@ -65,7 +65,7 @@ class StarShape(parent: Main, override val initpos: Point2d) extends ShapePolyOb
   }
 }
 
-case class StarScene(parent: Main) extends Scene(parent) with OscEventListener {
+case class StarScene(parent: Main) extends Scene(parent) {
 
   var pos: Point2d = parent.center
 

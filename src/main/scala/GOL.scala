@@ -1,7 +1,7 @@
 import scala.collection.immutable
 import scala.collection.mutable.ArrayBuffer
 import scala.util.Random
-
+import processing.core.{PConstants => pc}
 
 case class GOL(parent: Main) extends Scene(parent) {
   val rnd = Random
@@ -16,7 +16,7 @@ case class GOL(parent: Main) extends Scene(parent) {
   }
   var centers = initcenters
   var colarray = ArrayBuffer[Int](rnd.nextInt(360),rnd.nextInt(360))
-
+  var continuousIter = false
   val field: ArrayBuffer[ArrayBuffer[CellShape]] = new ArrayBuffer[ArrayBuffer[CellShape]]()
   centers.zipWithIndex.foreach{
     case (col,xidx) => {
@@ -32,20 +32,23 @@ case class GOL(parent: Main) extends Scene(parent) {
     field.flatten.foreach(shp => {
       shp.state = rnd.nextInt(2)
       shp.prevState = shp.state
-      shp.color = parent.color(colarray(shp.state),shp.s,shp.b)
+      shp.color = colarray(shp.state)
       shp.init()
     })
   }
 
   override def control(): Unit = {
-    if (parent.key == 'c') {
-      colarray = ArrayBuffer[Int](rnd.nextInt(360),rnd.nextInt(360))
-    }
+    val k = parent.key
+    if (k == 'c') {
+      colarray = Colors.gencolors(parent,"bw",2)//ArrayBuffer[Int](rnd.nextInt(360),rnd.nextInt(360))
+      field.flatten.foreach(shp => shp.curscene())
+    } else if (k == ' ') continuousIter = !continuousIter
+    else if (k == pc.TAB) fiteration()
     field.flatten.foreach(shp => shp.control())
   }
 
   override def curscene(): Unit = {
-    fiteration()
+    if (continuousIter) fiteration()
     field.flatten.foreach(shp => shp.curscene())
   }
 
@@ -63,7 +66,7 @@ case class GOL(parent: Main) extends Scene(parent) {
             // if cell is alive
             if (cell.prevState == 1 && (livnbrs < 2 || livnbrs > 3)) cell.state=0
             else if (cell.prevState == 0 && livnbrs == 3) cell.state = 1
-            cell.color = parent.color(colarray(cell.state),cell.s,cell.b)
+            cell.color = colarray(cell.state)
           }
         }
     }

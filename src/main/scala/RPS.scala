@@ -1,10 +1,12 @@
 import scala.collection.immutable
 import scala.collection.mutable.ArrayBuffer
 import scala.util.Random
-
+import processing.core.{PConstants => pc}
 case class RPS(parent: Main) extends Scene(parent) {
   val rnd = Random
   val cd = CellDims(parent)
+
+  var colormode = "bw"
 
   val balance = 5 // any number
   val numspecies = 2 * balance + 1
@@ -17,8 +19,8 @@ case class RPS(parent: Main) extends Scene(parent) {
   }
   var centers = initcenters
   var colarray = ArrayBuffer[Int]()
-  (0 until numspecies).foreach(i => colarray += rnd.nextInt(361))
-
+  colarray = Colors.gencolors(parent,colormode,numspecies)
+  var continuousIter = false
   val field: ArrayBuffer[ArrayBuffer[CellShape]] = new ArrayBuffer[ArrayBuffer[CellShape]]()
   centers.zipWithIndex.foreach{
     case (col,xidx) => {
@@ -31,25 +33,29 @@ case class RPS(parent: Main) extends Scene(parent) {
   }
 
   override def init(): Unit = {
+    colarray = Colors.gencolors(parent,colormode,numspecies)
     field.flatten.foreach(shp => {
       shp.state = rnd.nextInt(numspecies)
       shp.prevState = shp.state
-      shp.color = parent.color(colarray(shp.state),shp.s,shp.b)
+      shp.color = colarray(shp.state)
       shp.init()
     })
 //    field.flatten.foreach(shp => shp.init())
   }
 
   override def control(): Unit = {
-    if (parent.key == 'c') {
-      colarray = ArrayBuffer[Int]()
-      (0 until numspecies).foreach(i => colarray += rnd.nextInt(361))
-    }
+    val k = parent.key
+    if (k == 'c') {
+      colarray = Colors.gencolors(parent,colormode,numspecies)//ArrayBuffer[Int]()
+//      (0 until numspecies).foreach(i => colarray += rnd.nextInt(361))
+      field.flatten.foreach(shp => shp.curscene())
+    } else if (k == ' ') continuousIter = !continuousIter
+    else if (k == pc.TAB) fiteration()
     field.flatten.foreach(shp => shp.control())
   }
 
   override def curscene(): Unit = {
-    fiteration()
+    if (continuousIter) fiteration()
     field.flatten.foreach(shp => shp.curscene())
   }
 
@@ -79,7 +85,7 @@ case class RPS(parent: Main) extends Scene(parent) {
             } else {
               cell.state = m
             }
-            cell.color = parent.color(colarray(cell.state),cell.s,cell.b)
+            cell.color = colarray(cell.state)
           }
         }
     }

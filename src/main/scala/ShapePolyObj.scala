@@ -4,7 +4,7 @@ abstract case class ShapeObj(parent: Main, var shape: PShape) extends Scene(pare
 
   val initpos: Point2d
 
-  var color: Int = Main.randomColor()
+  var color: Int = Colors.randomColor()
   var pos: Point2d = initpos
   var scale: Float = 1
   var angle: Float = 0
@@ -20,7 +20,6 @@ abstract case class ShapeObj(parent: Main, var shape: PShape) extends Scene(pare
       shape.scale(scale)
       scale = 1
     }
-
     parent.rotate(angle)
     parent.translate(pos.x,pos.y)//pos.x,pos.y) // Works!
     parent.shape(shape)
@@ -39,6 +38,5 @@ abstract class ShapePolyObj(parent: Main, vertices: Seq[Point2d]) extends ShapeO
       pnt => vert(pos + pnt)
     )
     shape.endShape()
-    shape
   }
 }

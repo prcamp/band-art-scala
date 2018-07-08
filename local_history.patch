@@ -1,0 +1,126 @@
+Index: src/main/scala/StaticScene.scala
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/scala/StaticScene.scala	(date 1531030442000)
++++ src/main/scala/StaticScene.scala	(date 1531030442000)
+@@ -1,12 +1,13 @@
++import oscP5.OscMessage
++
+ import scala.collection.immutable
+-import scala.collection.mutable.ArrayBuffer
+ import scala.util.Random
+ 
+-case class StaticScene(parent: Main) extends Scene(parent){
++case class StaticScene(parent: Main) extends ShapeField(parent){
+   var numCellsX = 21
+   var cellSize = parent.fwidth/numCellsX
+   var numCellsY = parent.fheight/cellSize.toInt + 1
+-  val scale = 100
++  val scale = 1
+   val coords = List(
+     Point2d(0, 0),
+     Point2d(0, cellSize)*scale,
+@@ -14,6 +15,7 @@
+     Point2d(cellSize, 0)*scale
+   )
+ 
++
+   val initcenters: immutable.IndexedSeq[immutable.IndexedSeq[Point2d]] =
+     (0 until numCellsX).map{
+       i => (0 until numCellsY).map{
+@@ -21,66 +23,54 @@
+       }
+     }
+ 
++  override val initposField = initcenters.flatten
++
+   val rnd = Random
+ 
+-  var centers = initcenters
+   var continuousIter = false
+-  val field: ArrayBuffer[ArrayBuffer[CellShape]] = new ArrayBuffer[ArrayBuffer[CellShape]]()
+-  centers.zipWithIndex.foreach{
+-    case (col,xidx) => {
+-      val row = new ArrayBuffer[CellShape]()
+-      col.zipWithIndex.foreach{
+-        case (pnt,yidx) =>  row += shape(parent,pnt)
+-      }
+-      field += row
+-    }
+-  }
+ 
+-  val numspecies = 6
+-  var colarray = ArrayBuffer[Int]()
+-  (0 until numspecies).foreach(i => colarray += rnd.nextInt(361))
++  val numcolors = 80
++  var colormode = "bw"
+ 
+-  def rndColor(): Int = {
+-    val h = colarray(rnd.nextInt(numspecies))
+-    parent.color(h,100,100)
+-  }
++  var colarray = Colors.gencolors(parent,colormode,numcolors)
+ 
+-  def shape(parent: Main, pnt: Point2d): CellShape = new CellShape(parent,pnt) {}
++  def shape(parent: Main, pnt: Point2d): ShapeObj = new RectShape(parent,pnt,coords) {}
+ 
+   override def init(): Unit = {
+-    field.flatten.foreach(shp => {
+-//      shp.state = rnd.nextInt(2)
+-//      shp.prevState = shp.state
+-      shp.color = rndColor()//parent.color(,shp.s,shp.b)
+-      shp.init()
+-  })
++//    field.foreach(shp => {
++//      shp.color = Colors.randomColor(colarray)//parent.color(,shp.s,shp.b)
++//      shp.init()
++//  })
+   }
+ 
+   override def control(): Unit = {
+     if (parent.key == 'c') {
+-      colarray = ArrayBuffer[Int]()
+-      (0 until numspecies).foreach(i => colarray += rnd.nextInt(361))
+-      field.flatten.foreach(shp => shp.curscene())
++      colarray = Colors.gencolors(parent,colormode,numcolors)
+     }
+-  }
+-
+-  override def curscene(): Unit = {
+-    fiteration()
+-    field.flatten.foreach(shp => shp.curscene())
++    if (parent.key == ' ') {
++      continuousIter = !continuousIter
++    }
+   }
+ 
+-  def fiteration(): Unit = {
+-    field.flatten.foreach(
+-      shp => {
+-        shp.color = rndColor()
+-      }
++  override def fiteration(): Unit = {
++    if (continuousIter)
++      field.foreach(
++        shp => {
++          shp.color = Colors.randomColor(colarray)
++        }
+     )
+   }
++
++  override def oscEvent(oscMessage: OscMessage): Unit = {
++    super.oscEvent(oscMessage)
++  }
++
++
+ }
+ 
+ 
+ 
+-class CellShape(parent: Main,  override val initpos: Point2d, vertices: List[Point2d]) extends ShapePolyObj(parent, vertices) {
++class RectShape(parent: Main,  override val initpos: Point2d, vertices: List[Point2d]) extends ShapePolyObj(parent, vertices) {
+ 
+   var h = 0
+   var b = 100
