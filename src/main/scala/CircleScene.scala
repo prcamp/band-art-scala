@@ -44,6 +44,8 @@ case class CircleSceneA0(parent: Main) extends ShapeField(parent){
     new CircleShape(parent,pnt) {
       radius = gradius
     }
+
+  override val numcolors: Int = 4
 }
 
 case class CircleSceneA(parent: Main) extends ShapeField(parent){
@@ -136,6 +138,8 @@ case class CircleSceneA(parent: Main) extends ShapeField(parent){
     new CircleShape(parent,pnt) {
       radius = gradius
     }
+
+  override val numcolors: Int = 15
 }
 
 
@@ -229,12 +233,14 @@ case class CircleSceneB(parent: Main) extends ShapeField(parent){
     new CircleShape(parent,pnt) {
       radius = gradius
     }
+
+  override val numcolors: Int = 5
 }
 
 object CirclePShape {
   def apply(parent: Main, initpnt: Point2d): PShape = {
     val shape = parent.createShape(pc.ELLIPSE,initpnt.x,initpnt.y,20,20)
-    shape.setFill(Colors.randomColor())
+    shape.setFill(Colors.randomColor().toColor(parent))
     shape
   }
 }
@@ -249,7 +255,7 @@ class CircleShape(parent: Main, override val initpos: Point2d) extends ShapeObj(
 
   override def init(): Unit = {
     shape = CirclePShape(parent,initpos)
-    shape.setFill(Colors.randomColor())
+    shape.setFill(Colors.randomColor().toColor(parent))
 
   }
 

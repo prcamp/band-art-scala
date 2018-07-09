@@ -1,3 +1,5 @@
+import Colors.ColorCoords
+
 import scala.collection.immutable
 import scala.collection.mutable.ArrayBuffer
 import scala.util.Random
@@ -15,7 +17,7 @@ case class GOL(parent: Main) extends Scene(parent) {
     }
   }
   var centers = initcenters
-  var colarray = ArrayBuffer[Int](rnd.nextInt(360),rnd.nextInt(360))
+  var colarray = ArrayBuffer[ColorCoords](Colors.randomColor(),Colors.randomColor())
   var continuousIter = false
   val field: ArrayBuffer[ArrayBuffer[CellShape]] = new ArrayBuffer[ArrayBuffer[CellShape]]()
   centers.zipWithIndex.foreach{
@@ -32,7 +34,7 @@ case class GOL(parent: Main) extends Scene(parent) {
     field.flatten.foreach(shp => {
       shp.state = rnd.nextInt(2)
       shp.prevState = shp.state
-      shp.color = colarray(shp.state)
+      shp.clrcoords = colarray(shp.state)
       shp.init()
     })
   }
@@ -66,7 +68,7 @@ case class GOL(parent: Main) extends Scene(parent) {
             // if cell is alive
             if (cell.prevState == 1 && (livnbrs < 2 || livnbrs > 3)) cell.state=0
             else if (cell.prevState == 0 && livnbrs == 3) cell.state = 1
-            cell.color = colarray(cell.state)
+            cell.clrcoords = colarray(cell.state)
           }
         }
     }

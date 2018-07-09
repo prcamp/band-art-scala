@@ -18,8 +18,8 @@ class Main extends PApplet {
   controller.status(0)
   println(controller.properties())
   val rnd = Random
-  val fwidth = 640
-  val fheight = 360
+  val fwidth = 1600//1920
+  val fheight = 900//850
   val fullscr = false
   var center = Point2d(fwidth / 2, fheight / 2)
   val scale = Math.sqrt(Math.pow(fwidth,2)+Math.pow(fheight,2))
@@ -37,7 +37,7 @@ class Main extends PApplet {
   def randomPoint(): Point2d = Point2d(rnd.nextInt(fwidth),rnd.nextInt(fheight))
 
 
-  val scenes = List(StaticScene,TriangleScene, LineScene, CircleScene, CAScene, ParticleScene) // CA // ShapeIm
+  val scenes = List(StaticScene,TriangleScene, LineScene, CAScene, ParticleScene) // CA // ShapeIm
   val sceneapps = scenes.map(sc => sc(this))
   var curidx = 0
 
@@ -76,5 +76,46 @@ class Main extends PApplet {
 
   }
 
+//  override def oscStatus(oscStatus: OscStatus): Unit = {}
+//
+//  private val pages = List("/1","/2","/3","/4","/5","/6")
+//  override def oscEvent(oscMessage: OscMessage): Unit = {
+//    curscene.oscEvent(oscMessage)
+//    val addr = oscMessage.addrPattern
+//    controller.removeListener(curscene.asInstanceOf[OscEventListener])
+//    if (pages.contains(addr)) {
+//      if (addr == "/1") {
+//        curscene = StaticScene(this)
+//        controller.addListener(curscene.asInstanceOf[OscEventListener])
+//        curscene.init()
+//        draw()
+//      } else if (addr == "/2") {
+//        curscene = TriangleScene(this)
+//        controller.addListener(curscene.asInstanceOf[OscEventListener])
+//        curscene.init()
+//        draw()
+//      } else if (addr == "/3") {
+//        curscene = LineScene(this)
+//        controller.addListener(curscene.asInstanceOf[OscEventListener])
+//        curscene.init()
+//        draw()
+//      } else if (addr == "/4") {
+//        curscene = CircleScene(this)
+//        controller.addListener(curscene.asInstanceOf[OscEventListener])
+//        curscene.init()
+//        draw()
+//      } else if (addr == "/5") {
+//        curscene = CAScene(this)
+//        controller.addListener(curscene.asInstanceOf[OscEventListener])
+//        curscene.init()
+//        draw()
+//      } else if (addr == "/6") {
+//        curscene = ParticleScene(this)
+//        controller.addListener(curscene.asInstanceOf[OscEventListener])
+//        curscene.init()
+//        draw()
+//      }
+//    }
+//  }
 }
 

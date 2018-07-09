@@ -5,7 +5,7 @@ case class ACircle(parent: Main) extends Scene(parent) {
   val cent = parent.center
   override def init(): Unit = {
     shape = parent.createShape(pc.ELLIPSE,cent.x,cent.y,100,100)
-    shape.setFill(Colors.randomColor())
+    shape.setFill(Colors.randomColor().toColor(parent))
   }
 
   override def control(): Unit = {}

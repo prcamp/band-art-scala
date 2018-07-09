@@ -1,3 +1,5 @@
+import Colors.ColorCoords
+
 import scala.collection.mutable.ArrayBuffer
 
 
@@ -34,7 +36,7 @@ case class TestFullscreen(parent: Main) extends Scene(parent) {
     val curh = (360 * osc.signal()).toInt
     print(s"\r ${osc.signal()}")
     shp.h = curh
-    shp.color = parent.color(shp.h, shp.s, shp.b)
+    shp.clrcoords = ColorCoords(shp.h, shp.s, shp.b)
   }
 
   def shape(pnt: Point2d) = new StarShape(parent,pnt) {

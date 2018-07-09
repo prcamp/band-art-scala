@@ -1,3 +1,5 @@
+import Colors.ColorCoords
+
 import scala.collection.immutable
 import scala.collection.mutable.ArrayBuffer
 import scala.util.Random
@@ -18,7 +20,7 @@ case class RPS(parent: Main) extends Scene(parent) {
     }
   }
   var centers = initcenters
-  var colarray = ArrayBuffer[Int]()
+  var colarray = ArrayBuffer[ColorCoords]()
   colarray = Colors.gencolors(parent,colormode,numspecies)
   var continuousIter = false
   val field: ArrayBuffer[ArrayBuffer[CellShape]] = new ArrayBuffer[ArrayBuffer[CellShape]]()
@@ -37,7 +39,7 @@ case class RPS(parent: Main) extends Scene(parent) {
     field.flatten.foreach(shp => {
       shp.state = rnd.nextInt(numspecies)
       shp.prevState = shp.state
-      shp.color = colarray(shp.state)
+      shp.clrcoords = colarray(shp.state)
       shp.init()
     })
 //    field.flatten.foreach(shp => shp.init())
@@ -85,7 +87,7 @@ case class RPS(parent: Main) extends Scene(parent) {
             } else {
               cell.state = m
             }
-            cell.color = colarray(cell.state)
+            cell.clrcoords = colarray(cell.state)
           }
         }
     }

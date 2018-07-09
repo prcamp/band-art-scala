@@ -17,12 +17,14 @@ case class ParticleScene(parent: Main) extends ShapeField(parent){
         super.iteration()
       }
     }
+
+  override val numcolors: Int = 60
 }
 
 object ParticlePShape {
   def apply(parent: Main, initpnt: Point2d): PShape = {
     val shape = parent.createShape(pc.ELLIPSE,initpnt.x,initpnt.y,10,10)
-    shape.setFill(Colors.randomColor())
+    //shape.setFill(Colors.randomColor().toColor(parent))
     shape
   }
 }
@@ -35,7 +37,7 @@ class ParticleShape(parent: Main, override val initpos: Point2d) extends ShapeOb
 
   override def init(): Unit = {
     shape = ParticlePShape(parent,initpos)
-    shape.setFill(Colors.randomColor())
+    //shape.setFill(Colors.randomColor().toColor(parent))
   }
 
   override def control(): Unit = {}

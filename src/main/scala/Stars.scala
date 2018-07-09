@@ -1,4 +1,4 @@
-
+import Colors.ColorCoords
 
 case class Stars(parent: Main) extends ShapeField(parent) {
   def shape(parent: Main, pnt: Point2d): ShapeObj = new StarShape(parent,pnt) {
@@ -13,9 +13,9 @@ case class Stars(parent: Main) extends ShapeField(parent) {
     val curh = (360 * osc.signal()).toInt
 //    print(s"\r ${osc.signal()}")
     shp.h = curh
-    shp.color = parent.color(shp.h, shp.s, shp.b)
+    shp.clrcoords = ColorCoords(shp.h, shp.s, shp.b)
   }
 
-
+  override val numcolors: Int = numStars
 }
 

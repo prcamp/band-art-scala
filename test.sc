@@ -1,4 +1,4 @@
-
+import scala.collection.mutable.ArrayBuffer
 
 case class Signal(baseWave: Double => Double, var frequency: Double) {
   val time0 = System.currentTimeMillis()
@@ -22,3 +22,9 @@ osc.signal(0.toLong)
 (0 until 5).foreach{
   _ => print("\rhi\n")//\n\r\t how are you? \n\r\t I'm fine thanks \n")
 }
+
+val x = ArrayBuffer[Int](1,2,3,4)
+
+x.map(
+  i => println(i)
+)

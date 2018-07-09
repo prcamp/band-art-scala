@@ -1,3 +1,4 @@
+import Colors.ColorCoords
 import oscP5.{OscMessage, OscStatus}
 
 case class StarCoords() {
@@ -21,7 +22,7 @@ class StarShape(parent: Main, override val initpos: Point2d) extends ShapePolyOb
   var b = 100
   var s = 100
 
-  color = parent.color(h,s,b)
+  clrcoords = ColorCoords(h,s,b)
 
   var changeRate =  .8
 
@@ -34,26 +35,26 @@ class StarShape(parent: Main, override val initpos: Point2d) extends ShapePolyOb
       parent.translate(initpos.x, initpos.y)
       parent.shape(shape)
       pos = initpos.copy()
-      color = parent.color(0,255,255)
+      clrcoords = ColorCoords(0,255,255)
     }
     if (parent.keyCode == 37) {
       h = Math.max(h - 10,0)
-      color = parent.color(h,s,b)
+      clrcoords = ColorCoords(h,s,b)
       //      pos + Point2d(-10,0)
     }
     if (parent.keyCode == 39) {
       h = Math.min(h + 10,255)
-      color = parent.color(h,s,b)
+      clrcoords = ColorCoords(h,s,b)
       //pos = pos + Point2d(10,0)
     }
     if (parent.keyCode == 38) {
       b = Math.max(b - 10,0)
-      color = parent.color(h,s,b)
+      clrcoords = ColorCoords(h,s,b)
       //pos = pos + Point2d(0,-10)
     }
     if (parent.keyCode == 40) {
       b = Math.min(b + 10,255)
-      color = parent.color(h,s,b)
+      clrcoords = ColorCoords(h,s,b)
       //pos = pos + Point2d(0,10)
     }
   }
@@ -61,7 +62,7 @@ class StarShape(parent: Main, override val initpos: Point2d) extends ShapePolyOb
   override def iteration(): Unit = {
     //pos = pos*(1-changeRate) + Point2d(parent.mouseX,parent.mouseY)*changeRate
     h = (h*(1-changeRate) + Main.rnd.nextInt(360)*changeRate).toInt
-    color = parent.color(h,s,b)
+    clrcoords = ColorCoords(h,s,b)
   }
 }
 
